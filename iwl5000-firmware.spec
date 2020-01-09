@@ -1,10 +1,11 @@
 %define iwl5000_v1         5.4.A.11
 %define iwl5000_v2         8.24.2.12
-%define iwl5000_list       %{iwl5000_v1} %{iwl5000_v2}
+%define iwl5000_v5         8.83.5.1
+%define iwl5000_list       %{iwl5000_v1} %{iwl5000_v2} %{iwl5000_v5}
 
 Name:           iwl5000-firmware
-Version:        %{iwl5000_v2}
-Release:        3%{?dist}
+Version:        %{iwl5000_v5}_1
+Release:        1%{?dist}.1
 Summary:        Firmware for Intel® PRO/Wireless 5000 A/G/N network adaptors
 
 Group:          System Environment/Kernel
@@ -12,6 +13,7 @@ License:        Redistributable, no modification permitted
 URL:            http://intellinuxwireless.org/
 Source0:        http://intellinuxwireless.org/iwlwifi/downloads/iwlwifi-5000-ucode-%{iwl5000_v1}.tar.gz
 Source1:        http://intellinuxwireless.org/iwlwifi/downloads/iwlwifi-5000-ucode-%{iwl5000_v2}.tgz
+Source2:        http://intellinuxwireless.org/iwlwifi/downloads/iwlwifi-5000-ucode-%{iwl5000_v5}-1.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -24,9 +26,11 @@ inside the provided LICENSE file. Please read it carefully.
 
 %prep
 %setup -c -q
-%setup -c -q -D -T -a 1
+%setup -c -q -D -T -a 1 -a 2
 
-pushd iwlwifi-5000-ucode-%{version}
+# Temporarily hack the directory name to overcome Intel's release wierdness...
+#pushd iwlwifi-5000-ucode-%{version}
+pushd iwlwifi-5000-ucode-8.83.5.1
 # Change encoding
 sed -i 's/\r//'  LICENSE.iwlwifi-5000-ucode README.iwlwifi-5000-ucode
 # Rename docs
@@ -61,6 +65,21 @@ rm -rf $RPM_BUILD_ROOT
 /lib/firmware/*.ucode
 
 %changelog
+* Wed Jun  1 2011 John W. Linville <linville@redhat.com> - 8.83.5.1_1-1.el6_1.1
+- Bump NVR for RHEL-6.1.z branch
+
+* Mon Feb 28 2011 John W. Linville <linville@redhat.com> - 8.83.5.1_1-1
+- Update for re-released 8.83.5.1 firmware
+
+* Mon Feb 28 2011 John W. Linville <linville@redhat.com> - 8.83.5.1-2
+- Reinstate v2 firmware for use by older kernels
+
+* Fri Feb 25 2011 John W. Linville <linville@redhat.com> - 8.83.5.1-1
+- Update for upstream version 8.83.5.1
+
+* Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 8.24.2.12-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Thu Jan  7 2010 John W. Linville <linville@redhat.com> - 8.24.2.12-3
 - Add dist tag
 
